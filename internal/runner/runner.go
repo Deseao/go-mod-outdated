@@ -33,9 +33,11 @@ func Run(in io.Reader, out io.Writer, update, direct, exitWithNonZero bool, styl
 		if err != nil {
 			if err == io.EOF {
 				filteredModules := mod.FilterModules(modules, update, direct)
-				tableErr := renderTable(out, filteredModules, style)
-				if tableErr != nil {
-					return tableErr
+				if len(filteredModules) > 0 {
+					tableErr := renderTable(out, filteredModules, style)
+					if tableErr != nil {
+						return tableErr
+					}
 				}
 
 				if hasOutdated(filteredModules) && exitWithNonZero {
