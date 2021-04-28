@@ -20,8 +20,16 @@ var OsExit = os.Exit
 //go:embed templates/table.html
 var tableTemplate string
 
+type Style string
+
+const (
+	StyleDefault  Style = "default"
+	StyleMarkdown Style = "markdown"
+	StyleHTML     Style = "html"
+)
+
 // Run converts the the json output of go list -u -m -json all to table format
-func Run(in io.Reader, out io.Writer, update, direct, exitWithNonZero bool, style string) error {
+func Run(in io.Reader, out io.Writer, update, direct, exitWithNonZero bool, style Style) error {
 	var modules []mod.Module
 
 	dec := json.NewDecoder(in)
@@ -64,15 +72,15 @@ func hasOutdated(filteredModules []mod.Module) bool {
 	return false
 }
 
-func renderTable(writer io.Writer, modules []mod.Module, style string) error {
-	if style == "html" {
+func renderTable(writer io.Writer, modules []mod.Module, style Style) error {
+	if style == StyleHTML {
 		return RenderHTMLTable(writer, modules)
 	}
 	table := tablewriter.NewWriter(writer)
 	table.SetHeader([]string{"Module", "Version", "New Version", "Direct", "Valid Timestamps"})
 
 	// Render table as markdown
-	if style == "markdown" {
+	if style == StyleMarkdown {
 		table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 		table.SetCenterSeparator("|")
 	}

@@ -16,9 +16,20 @@ func main() {
 	style := flag.String("style", "default", "Output style, pass 'markdown' for a Markdown table")
 	flag.Parse()
 
-	err := runner.Run(os.Stdin, os.Stdout, *withUpdate, *onlyDirect, *exitNonZero, *style)
+	err := runner.Run(os.Stdin, os.Stdout, *withUpdate, *onlyDirect, *exitNonZero, normalizeStyle(*style))
 
 	if err != nil {
 		log.Print(err)
+	}
+}
+
+func normalizeStyle(style string) runner.Style {
+	switch style {
+	case "markdown":
+		return runner.StyleMarkdown
+	case "html":
+		return runner.StyleHTML
+	default:
+		return runner.StyleDefault
 	}
 }
